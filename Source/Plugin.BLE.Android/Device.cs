@@ -364,5 +364,65 @@ namespace Plugin.BLE.Android
                 throw new Exception($"Update Connection Interval fails with error. {ex.Message}");
             }
         }
+
+        public override ISocket CreateSocket(SocketType type)
+        {
+            switch (type)
+            {
+                case SocketType.L2cap:
+                {
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+                    {
+                        Trace.Message($"Request L2cap channel not supported in this Android API level");
+                        return null;
+                    }
+
+                    try
+                    {
+                        BluetoothSocket realSock = BluetoothDevice.CreateL2capChannel(0);
+
+                        if (realSock == null)
+                            return null;
+
+                        Socket wrapSock = new Socket(realSock);
+                        return wrapSock;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Create L2cap channel fails with error. {ex.Message}");
+                    }
+                }
+
+                case SocketType.Rfcomm:
+                {
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.GingerbreadMr1)
+                    {
+                        Trace.Message($"Request Rfcomm channel not supported in this Android API level");
+                        return null;
+                    }
+
+                    try
+                    {
+                        var sppUuid = Java.Util.UUID.FromString("00001101-0000-1000-8000-00805f9b34fb");
+                        BluetoothSocket realSock = BluetoothDevice.CreateRfcommSocketToServiceRecord(sppUuid);
+
+                        if (realSock == null)
+                            return null;
+
+                        Socket wrapSock = new Socket(realSock);
+                        return wrapSock;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Create L2cap channel fails with error. {ex.Message}");
+                    }
+                }
+
+                default:
+                {
+                    throw new Exception($"Invalid socket type passed: {type}");
+                }
+            }
+        }
     }
 }

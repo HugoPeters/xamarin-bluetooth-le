@@ -38,6 +38,13 @@ namespace Plugin.BLE.iOS
             // TODO figure out if this is in any way required,  
             // https://github.com/xabre/xamarin-bluetooth-le/issues/81
             //_nativeDevice.UpdatedName += OnNameUpdated;
+
+            _nativeDevice.DidOpenL2CapChannel += _nativeDevice_DidOpenL2CapChannel;
+        }
+
+        private void _nativeDevice_DidOpenL2CapChannel(object sender, CBPeripheralOpenL2CapChannelEventArgs e)
+        {
+            e.Channel.InputStream.
         }
 
         private void OnNameUpdated(object sender, EventArgs e)

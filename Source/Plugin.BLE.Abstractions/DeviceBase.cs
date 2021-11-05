@@ -94,6 +94,7 @@ namespace Plugin.BLE.Abstractions
         protected abstract Task<IReadOnlyList<IService>> GetServicesNativeAsync();
         protected abstract Task<int> RequestMtuNativeAsync(int requestValue);
         protected abstract bool UpdateConnectionIntervalNative(ConnectionInterval interval);
+        public abstract ISocket CreateSocket(SocketType type);
 
         public override string ToString()
         {
